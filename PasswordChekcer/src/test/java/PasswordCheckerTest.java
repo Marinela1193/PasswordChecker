@@ -40,16 +40,21 @@ public class PasswordCheckerTest {
                     e.getMessage()
             );
         }
+        //comprobamos el borderline
+        checker.setMinLength(1);
+
+        assertEquals(
+                1,
+                checker.getMinLength()
+        );
     }
 
     @Test
     void invalidMaxLength() {
         PasswordChecker checker = new PasswordChecker();
-
+        //comprobamos el borderline
         try {
-
-            checker.setMaxLength(5);
-
+            checker.setMaxLength(7);
             fail("Se esperaba una IllegalArgumentException");
 
         } catch (IllegalArgumentException e) {
@@ -59,6 +64,21 @@ public class PasswordCheckerTest {
                     e.getMessage()
             );
         }
+
+        //comprobamos que si utilizamos longitud igual o mayor va bien.
+        checker.setMaxLength(8);
+
+        assertEquals(
+                8,
+                checker.getMaxLength()
+        );
+
+        checker.setMaxLength(9);
+
+        assertEquals(
+                9,
+                checker.getMaxLength()
+        );
     }
 
     @Test
