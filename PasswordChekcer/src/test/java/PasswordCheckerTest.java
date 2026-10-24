@@ -94,6 +94,23 @@ public class PasswordCheckerTest {
     }
 
     @Test
+    void passwordTooLong() {
+        PasswordChecker checker = new PasswordChecker();
+
+        checker.setMaxLength(10);
+
+        int resultado = checker.check(
+                "Abcdef12345",
+                "Abcdef12345"
+        );
+
+        assertEquals(
+                PasswordChecker.ERR_LENGTH,
+                resultado
+        );
+    }
+
+    @Test
     void passwordEmpty() {
         PasswordChecker checker = new PasswordChecker();
         int resultado = checker.check("", "");
