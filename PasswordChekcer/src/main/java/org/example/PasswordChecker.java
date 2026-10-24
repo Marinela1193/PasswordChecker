@@ -1,5 +1,7 @@
 package org.example;
 
+import java.util.regex.Pattern;
+
 public class PasswordChecker {
     public static final int PASSWORD_OK = 0;
     public static final int ERR_LENGTH = 1;
@@ -8,39 +10,43 @@ public class PasswordChecker {
     public static final int ERR_LOWERS = 4;
     public static final int ERR_BLANK = 5;
     public static final int ERR_NO_MATCH = 6;
-
-    private int minLength;
-    private int maxLength;
-
-    private boolean checkDigits;
-    private boolean checkUppers;
-    private boolean checkLowers;
+    public static final String ERR_INVALID_MIN_LENGTH = "La longitud mínima del password no puede ser cero o menor";
+    public static final String ERR_INVALID_MAX_LENGTH = "Longitud máxima inferior a la mínima";
+    static final String REGEX_DIGITO = "^.*\\d.*$";
+    static final String REGEX_MINUSCULA = "^.*[a-z].*$";
+    static final String REGEX_MAYUSCULA = "^.*[A-Z].*$";
+    private int minLength = 8;
+    private int maxLength = Integer.MAX_VALUE;
+    private boolean checkDigits = false;
+    private boolean checkUppers = false;
+    private boolean checkLowers = false;
 
     public int getMinLength() {
-        return minLength;
+        return this.minLength;
     }
 
-    public void setMinLength(int minLength) {
-        if (minLength < 0) {
-            throw new IllegalArgumentException();
+    public void setMinLength(int minLength) throws IllegalArgumentException {
+        if (minLength <= 0) {
+            throw new IllegalArgumentException("La longitud mínima del password no puede ser cero o menor");
+        } else {
+            this.minLength = minLength;
         }
-
-        this.minLength = minLength;
     }
 
     public int getMaxLength() {
-        return maxLength;
+        return this.maxLength;
     }
-    public void setMaxLength(int maxLength) {
-        if (maxLength < minLength) {
-            throw new IllegalArgumentException();
-        }
 
-        this.maxLength = maxLength;
+    public void setMaxLength(int maxLength) throws IllegalArgumentException {
+        if (maxLength < this.getMinLength()) {
+            throw new IllegalArgumentException("Longitud máxima inferior a la mínima");
+        } else {
+            this.maxLength = maxLength;
+        }
     }
 
     public boolean getCheckDigits() {
-        return checkDigits;
+        return this.checkDigits;
     }
 
     public void setCheckDigits(boolean checkDigits) {
@@ -48,21 +54,34 @@ public class PasswordChecker {
     }
 
     public boolean getCheckUppers() {
-       return checkUppers;
-    }
-    public boolean getCheckLowers() {
-        return checkLowers;
+        return this.checkUppers;
     }
 
     public void setCheckUppers(boolean checkUppers) {
         this.checkUppers = checkUppers;
     }
+
+    public boolean getCheckLowers() {
+        return this.checkLowers;
+    }
+
     public void setCheckLowers(boolean checkLowers) {
         this.checkLowers = checkLowers;
     }
 
-    public int check(String password, String repeatPassword){
-
+    public int check(String password, String repeatPassword) {
+        if (password.isBlank()) {
+            return 5;
+        } else if (password.length() < this.getMinLength()) {
+            return 1;
+        } else if (this.getCheckDigits() && !Pattern.matches("^.*\\d.*$", password)) {
+            return 2;
+        } else if (this.getCheckLowers() && !Pattern.matches("^.*[a-z].*$", password)) {
+            return 4;
+        } else if (this.getCheckUppers() && !Pattern.matches("^.*[A-Z].*$", password)) {
+            return 3;
+        } else {
+            return !password.equals(repeatPassword) ? 6 : 0;
+        }
     }
-
 }
